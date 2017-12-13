@@ -18,6 +18,7 @@ public static void main(String[] args) {
                 conn.close();
         }catch (SQLException e)
         {
+                //System.out.println(e);
                 e.printStackTrace();
         }
 
@@ -28,19 +29,20 @@ public static void main(String[] args) {
 
 
 
+
+
 //adding a university method
 public static void addUniversity(Connection conn) throws SQLException
 {
-
 
         String universityName ="", city ="", state ="";
         int zipcode =0;
         boolean inputTaken = false;
 
-        universityName = Operation.stringInput(universityName);
-        city = Operation.stringInput(city);
-        state = Operation.stringInput(state);
-        zipcode = Operation.intInput(zipcode);
+        universityName = Operation.stringInput(1); //initializing universityName,
+        city = Operation.stringInput(2); //initializing city,
+        state = Operation.stringInput(3); //initializing state,
+        zipcode = Operation.intInput(4); //initializing zipcode,
 
 
 
@@ -55,12 +57,46 @@ public static void addUniversity(Connection conn) throws SQLException
         statement.setInt(4, zipcode);
 
 
-
         int rowsAffected = statement.executeUpdate();
         if (rowsAffected > 0) {
-                System.out.println("SUCCESS!!, YOU ARE AMAZING");
+                System.out.println("********** SUCCESS!!, UNIVERSITY ADDED *********");
         }
 }
+
+
+//START HERE
+//
+// //adding a university method
+// public static void addUser(Connection conn) throws SQLException
+// {
+//
+//         String userName ="", password ="", universityName ="";
+//         int zipcode =0;
+//         boolean inputTaken = false;
+//
+//         universityName = Operation.stringInput(1); //initializing universityName,
+//         city = Operation.stringInput(2); //initializing city,
+//         state = Operation.stringInput(3); //initializing state,
+//         zipcode = Operation.intInput(4); //initializing zipcode,
+//
+//
+//
+//
+//         String sql = "INSERT INTO University (universityName, city, state, zipcode)"
+//                      + "VALUES (?, ?, ?, ?)";
+//
+//         PreparedStatement statement = conn.prepareStatement(sql);
+//         statement.setString(1, universityName);
+//         statement.setString(2, city);
+//         statement.setString(3, state);
+//         statement.setInt(4, zipcode);
+//
+//
+//         int rowsAffected = statement.executeUpdate();
+//         if (rowsAffected > 0) {
+//                 System.out.println("********** SUCCESS!!, UNIVERSITY ADDED *********");
+//         }
+// }
 
 
 
