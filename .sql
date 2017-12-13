@@ -24,7 +24,6 @@ CREATE TABLE User(
   lastName VARCHAR(20),
   firstName VARCHAR(20),
   phoneNo INTEGER(10),
-  email VARCHAR(30),
   licenceNumber VARCHAR(15),
   FOREIGN KEY (universityName) REFERENCES University(universityName)
 );
@@ -275,8 +274,8 @@ SELECT universityName FROM University ;
 SELECT universityName, zipcode FROM University ;
 
 #Inserting jdoe in the User Table
-INSERT INTO User(userName, password, universityName, lastName, firstName, phoneNo, email, licenceNumber)
-VALUES ('jdoe1',sha('jdoe'),'Northeastern Illinois ', 'Doe', 'John', '0000000000', 'jdoe@gmail.com','L-100-000');
+INSERT INTO User(userName, password, universityName, lastName, firstName, phoneNo, licenceNumber)
+VALUES ('jdoe1',sha('jdoe'),'Northeastern Illinois ', 'Doe', 'John', '0000000000','L-100-000');
 
 #Error codes for reference
 # Code 1062: Duplicate User
