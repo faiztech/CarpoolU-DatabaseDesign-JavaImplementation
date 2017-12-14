@@ -43,8 +43,6 @@ public static String stringInput(int code)
 }
 
 
-
-
 //This function processes an Integer Input
 public static int intInput(int code)
 {
@@ -154,7 +152,6 @@ public static String Placeholder (int value)
                 break;
         case 25: string = "your username.";
                 break;
-
         case 4:   string = "the zipcode where your University is located [Integers only].";
                 break;
         case 10:  string = "your phone number.";
