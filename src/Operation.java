@@ -83,38 +83,38 @@ public static int intInput(int code)
 //"2018-03-07"
 
 
-//This function processes a Date Input
-public static String dateInput(int code)
-{
-        inputTaken = false;
-        placeholder = Placeholder(code);
-        String userEntry = "";
-
-        while (!inputTaken)
-        {
-                userEntry = JOptionPane.showInputDialog("ENTER " + placeholder +"(in YYYY-MM-DD format) [Type EXIT to quit]");
-
-                if (userEntry.isEmpty())
-                {
-                        JOptionPane.showMessageDialog(null, "Error you did not enter a value, please try again.", "Error",
-                                                      JOptionPane.ERROR_MESSAGE);
-                } else if (userEntry.equals("EXIT"))
-                {
-                        result = JOptionPane.showConfirmDialog(null,
-                                                               "Are you sure you want to exit?",
-                                                               "Confirm EXIT", JOptionPane.YES_NO_CANCEL_OPTION);
-                        if (result == JOptionPane.YES_OPTION) System.exit(0);
-
-                        inputTaken = true;
-                }
-                else
-                {
-                        inputTaken = true;
-                }
-
-        }
-        return userEntry;
-}
+////This function processes a Date Input
+//public static String dateInput(int code)
+//{
+//        inputTaken = false;
+//        placeholder = Placeholder(code);
+//        String userEntry = "";
+//
+//        while (!inputTaken)
+//        {
+//                userEntry = JOptionPane.showInputDialog("ENTER " + placeholder +"(in YYYY-MM-DD format) [Type EXIT to quit]");
+//
+//                if (userEntry.isEmpty())
+//                {
+//                        JOptionPane.showMessageDialog(null, "Error you did not enter a value, please try again.", "Error",
+//                                                      JOptionPane.ERROR_MESSAGE);
+//                } else if (userEntry.equals("EXIT"))
+//                {
+//                        result = JOptionPane.showConfirmDialog(null,
+//                                                               "Are you sure you want to exit?",
+//                                                               "Confirm EXIT", JOptionPane.YES_NO_CANCEL_OPTION);
+//                        if (result == JOptionPane.YES_OPTION) System.exit(0);
+//
+//                        inputTaken = true;
+//                }
+//                else
+//                {
+//                        inputTaken = true;
+//                }
+//
+//        }
+//        return userEntry;
+//}
 
 // This function processes the placeholder
 public static String Placeholder (int value)
@@ -140,7 +140,7 @@ public static String Placeholder (int value)
                 break;
         case 11: string = "your License Number.";
                 break;
-        case 12: string = "your Registation Number.";
+        case 12: string = "your Registration Number.";
                 break;
         case 14: string = "the make of your car.";
                 break;
@@ -148,7 +148,7 @@ public static String Placeholder (int value)
                 break;
         case 17: string = "the color of your car.";
                 break;
-        case 20: string = "the date on which you will be travelling.";
+        case 20: string = "the date on which you will be travelling [YYYY-MM-DD format].";
                 break;
         case 25: string = "your username.";
                 break;
@@ -156,11 +156,11 @@ public static String Placeholder (int value)
                 break;
         case 10:  string = "your phone number.";
                 break;
-        case 16:  string = "the make year.";
+        case 16:  string = "the make year [YYYY Format].";
                 break;
         case 18:  string = "ride ID.";
                 break;
-        case 21:  string = "the zipcode from where you will be travelling.";
+        case 21:  string = "the zipcode from where you will be travelling [FIVE DIGITS].";
                 break;
         case 22:  string = "the zipcode to where you will be travelling.";
                 break;

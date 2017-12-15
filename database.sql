@@ -24,8 +24,8 @@ CREATE TABLE User(
   lastName VARCHAR(20),
   firstName VARCHAR(20),
   phoneNo INTEGER(10),
-  licenceNumber VARCHAR(15),
-  FOREIGN KEY (universityName) REFERENCES University(universityName)
+  licenseNumber VARCHAR(15),
+  FOREIGN KEY (universityName) REFERENCES University(universityName) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -38,8 +38,7 @@ CREATE TABLE Car(
   model VARCHAR(15),
   year INTEGER(4),
   color VARCHAR(10),
-  luxury BOOLEAN DEFAULT FALSE,
-  FOREIGN KEY (owner) REFERENCES User(userName)
+  FOREIGN KEY (owner) REFERENCES User(userName) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 #Creating Table Ride
@@ -50,8 +49,8 @@ CREATE TABLE Ride (
   sourceZip      INTEGER(5),
   destZip        INTEGER(5),
   seatsAvl       INTEGER(1)  DEFAULT 1,
-  FOREIGN KEY (registrationNo) REFERENCES Car (registrationNo),
-  FOREIGN KEY (destZip) REFERENCES University (zipcode)
+  FOREIGN KEY (registrationNo) REFERENCES Car (registrationNo) ON DELETE CASCADE ON UPDATE CASCADE ,
+  FOREIGN KEY (destZip) REFERENCES University (zipcode) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -61,9 +60,8 @@ CREATE TABLE RideRequest(
   requestedBy VARCHAR(20) ,
   rideID INTEGER(10) ,
   requestStatus BOOLEAN DEFAULT FALSE ,
-  seatsRequired INTEGER(1) DEFAULT 1,
-  FOREIGN KEY (requestedBy) REFERENCES User(userName),
-  FOREIGN KEY (rideID)REFERENCES Ride(rideID)
+  FOREIGN KEY (requestedBy) REFERENCES User(userName) ON DELETE CASCADE ON UPDATE CASCADE ,
+  FOREIGN KEY (rideID)REFERENCES Ride(rideID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 #**********DONE CREATING TABLES**********
@@ -81,7 +79,7 @@ insert into University (universityName, city, state, zipcode) values ('Hokuriku 
 insert into University (universityName, city, state, zipcode) values ('Universidad Autónoma de Chihuahua', 'Chicago', 'Illinois', '60674');
 
 #Test User
-INSERT INTO User (userName, password, universityName, lastName, firstName, phoneNo, licenceNumber)
+INSERT INTO User (userName, password, universityName, lastName, firstName, phoneNo, licenseNumber)
 VALUES ('test',sha('000000'),'Northeastern Illinois University','man','super','0000000000','123456');
 
 
@@ -113,8 +111,8 @@ INSERT INTO Ride (registrationNo, date, sourceZip, destZip, seatsAvl)
 
 
   #3.3 REQUEST AVAILABLE RIDE
-        INSERT INTO RideRequest (requestedBy, rideID, seatsRequired)
-          VALUES ('test','1','2');
+        INSERT INTO RideRequest (requestedBy, rideID)
+          VALUES ('test','1');
 
 
 #4 VIEW PREVIOUS RIDES [RIDER / DRIVER] FILTERED BY USER LOGGED IN
@@ -138,7 +136,7 @@ WHERE Ride.rideID = RideRequest.rideID && RideRequest.requestedBy ='test';
 #6 SIGN UP
 
   #6.1 SIGN UP USERS
-     INSERT INTO User (userName, password, universityName, lastName, firstName, phoneNo, licenceNumber)
+     INSERT INTO User (userName, password, universityName, lastName, firstName, phoneNo, licenseNumber)
       VALUES ('test2',sha('000000'),'Northeastern Illinois University','man','super','0000000000','123456');
 
   #6.2 SEARCH UNIVERSITIES BY ZIP
@@ -152,7 +150,32 @@ WHERE Ride.rideID = RideRequest.rideID && RideRequest.requestedBy ='test';
 
 
 
+#*******************DEBUGGINGS
+
+
+#DELETE FROM University WHERE universityName = "Northeastern Illinois University";
+
+#SELECT * FROM University WHERE universityName = "Northeastern Illinois University";
+
+
+
+
+#DELETE FROM User WHERE userName = "test"
+
+
 #Error codes for reference
 # Code 1062: Duplicate User
 # Code 1452: No University exists for user
+
+#
+#SELECT sys.col FROM University;
+
+
+
+
+#select  Column_name,TABLE_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, COLUMN_KEY, EXTRA
+#from Information_schema.columns
+#where (Table_name like 'University' OR Table_name like 'User' OR Table_name like 'Car' OR Table_name like 'Ride' OR Table_name like 'RideRequest');
+
+
 

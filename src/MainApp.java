@@ -15,7 +15,9 @@ public static void main(String[] args) {
                 Connection conn = Connect.getConnection();
                 // change this to whatever method you want to test.
                 // Make sure the Connect.java points to your database
-                loginMenu(conn, "faiz");
+            login(conn);
+                //Ride.requestRide(conn,"faiz","123456",60625);
+
                 conn.close();
         }catch (SQLException e)
         {
@@ -25,37 +27,99 @@ public static void main(String[] args) {
 
 }
 
-public static void loginMenu(Connection conn, String userName) throws SQLException
+
+
+//This function shows the login menu
+public static void loginMenu(Connection conn, String userName, String registrationNo, int destZip) throws SQLException
 {
         //Frame frame = new JFrame("InputDialog Example #3");
 
-        String[] options = new String[] {"Add a Car", "Create a Ride [for DRIVERS]", "Request A Ride [for RIDERS]", "View Previous Rides", "View Ride Request Status","Exit"};
-        String choice = (String)JOptionPane.showInputDialog(null,   "Welcome to Carpool - U. \n An Amazing Platform that helps you reach your University  \n Please select an option to proceed "
+        String[] options = new String[] {"Add a Car", "Create a Ride [for DRIVERS]", "Request A Ride / View Requested Ride Status [for RIDERS]", "View Previous Rides [for BOTH]", "View Requests/ Accept a Request","Exit"};
+        String choice = (String)JOptionPane.showInputDialog(null,   "Welcome to Carpool - U. \n An Amazing Platform that helps you reach your University  \n Please select an option to proceed \n *NOTE: Right now only rides to the University are supported.* \n  *And, the default time for the start of all the rides is 9:00AM* \n"
                                                             , "MAIN MENU",
                                                             JOptionPane.PLAIN_MESSAGE,
                                                             null, options, options[0]);
-
-        switch (choice)
+        System.out.println(choice);
+        if (choice == "Add a Car")
         {
-        case "Add a Car": addCar(conn, userName);
-        case "Create a Ride [for DRIVERS]":     //code here
-        case "Request A Ride [for RIDERS]":     //
-        case "View Previous Rides":     //
-        case "View Ride Request Status":     //
-        case "Exit": System.exit(0);
-        default:
+                addCar(conn, userName);
+
+
 
         }
+        else if(choice == "Create a Ride [for DRIVERS]")
+        {
 
 
+                try{
 
+                        Ride.createRide(conn, userName, registrationNo, destZip);
+                }
+                catch (Exception e) {
+                        System.out.println(e.toString());
+                        JOptionPane.showMessageDialog(null, "Oh, looks like you don't have your car added yet. \n Lets add a car first!" + "\n Click Ok to Proceed");
 
+                        addCar(conn, userName);
+                        //e.printStackTrace();
+                }
 
-        System.out.println(choice);
+        }
+        else if(choice ==  "Request A Ride [for RIDERS]") { Ride.requestRide(conn, userName, registrationNo,destZip);  }
+        else if(choice ==  "View Previous Rides") {}
+        else if(choice ==  "View Ride Request Status") {}
+        else if(choice ==  "Exit")
+        { System.exit(0);}
+
 }
 
 
-//LATER
+
+//After login this function will get all the user data and sent it to login Menu
+public static void getUserDataShowMenu(Connection conn, String userName) throws SQLException
+{
+
+        String universityName = "";
+        String lastName = "";
+        String firstName = "";
+        int phoneNo = 0;
+        String licenseNumber ="";
+        String registrationNo ="";
+        int destZip =0;
+
+        String sql = "SELECT universityName, lastName, firstName, phoneNo, licenseNumber FROM User WHERE userName = \'" + userName + "\'";
+
+        Statement statement = conn.createStatement();
+        ResultSet result = statement.executeQuery(sql);
+        while (result.next()) {
+
+                universityName = result.getString(1);
+                lastName = result.getString("lastName");
+                firstName = result.getString("firstName");
+                phoneNo = result.getInt("phoneNo");
+                licenseNumber = result.getString("licenseNumber");
+        }
+        sql = "SELECT registrationNo FROM Car WHERE owner = \'" + userName + "\'";
+
+        statement = conn.createStatement();
+        ResultSet result2 = statement.executeQuery(sql);
+        while (result2.next()) {
+
+                registrationNo = result2.getString("registrationNo");
+        }
+        sql = "SELECT zipcode FROM University WHERE universityName = \'" + universityName + "\'";
+
+        statement = conn.createStatement();
+        ResultSet result3 = statement.executeQuery(sql);
+
+        while (result3.next()) {
+
+                destZip = result3.getInt("zipcode");
+        }
+
+        loginMenu(conn, userName, registrationNo, destZip);
+}
+
+
 // add a car method
 public static void addCar(Connection conn, String userName) throws SQLException
 {
@@ -93,6 +157,8 @@ public static void addCar(Connection conn, String userName) throws SQLException
         }
 }
 
+
+//login method
 public static void login(Connection conn) throws SQLException
 {
 
@@ -138,10 +204,13 @@ public static void login(Connection conn) throws SQLException
 
                 else
                 {
-                        loginMenu(conn, userName);
+                        System.out.println("Login success");
+
+
+                        getUserDataShowMenu(conn, userName);
+
                 }
 
-                //System.out.println(universityName);
         }
 
 
@@ -150,9 +219,9 @@ public static void login(Connection conn) throws SQLException
 }
 
 
-
 //select a university method
-public static void selectUniversity(Connection conn) throws SQLException {
+public static void selectUniversity(Connection conn) throws SQLException
+{
 
 
         int zipcode = 0;
@@ -215,10 +284,9 @@ public static void selectUniversity(Connection conn) throws SQLException {
                 }
         }
 
-        System.out.println(universityName);
+        System.out.println("***SELECT UNIVERSITY CALLED***");
 
 }
-
 
 
 //adding a university method
@@ -258,6 +326,27 @@ public static void addUniversity(Connection conn) throws SQLException
 //adding a user method
 public static void addUser(Connection conn) throws SQLException
 {
+
+    Object[] options = { "View Supported Universities","Create an Account"};
+
+    int choice = JOptionPane.showOptionDialog(null, //Component parentComponent
+            "Would you like to view supported Universities before creating an Account ?" + "\n Choose an option to proceed", //Object message,
+            "CREATE ACCOUNT MENU", //String title
+            JOptionPane.YES_NO_CANCEL_OPTION, //int optionType
+            JOptionPane.INFORMATION_MESSAGE, //int messageType
+            null, //Icon icon,
+            options, //Object[] options,
+            "Create an Account");//Object initialValue
+    if(choice == 0 ) {
+
+        selectUniversity(conn);
+    } else
+
+
+
+
+
+
         JOptionPane.showMessageDialog(null, "Let's create an account for you." + "\n Click Ok to Proceed","Add User",JOptionPane.PLAIN_MESSAGE);
 
         String userName ="", password ="", universityName ="", lastName = "", firstName ="", licenseNumber ="";
@@ -290,13 +379,6 @@ public static void addUser(Connection conn) throws SQLException
                 System.out.println("********** SUCCESS!!, USER ADDED *********");
         }
 }
-
-
-
-
-
-
-
 
 
 
