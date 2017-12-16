@@ -73,7 +73,6 @@ public static void loginMenu(Connection conn, String userName, String registrati
 }
 
 
-
 //After login this function will get all the user data and sent it to login Menu
 public static void getUserDataShowMenu(Connection conn, String userName) throws SQLException
 {
@@ -82,11 +81,10 @@ public static void getUserDataShowMenu(Connection conn, String userName) throws 
         String lastName = "";
         String firstName = "";
         int phoneNo = 0;
-        String licenseNumber ="";
         String registrationNo ="";
         int destZip =0;
 
-        String sql = "SELECT universityName, lastName, firstName, phoneNo, licenseNumber FROM User WHERE userName = \'" + userName + "\'";
+        String sql = "SELECT universityName, lastName, firstName, phoneNo FROM User WHERE userName = \'" + userName + "\'";
 
         Statement statement = conn.createStatement();
         ResultSet result = statement.executeQuery(sql);
@@ -96,7 +94,6 @@ public static void getUserDataShowMenu(Connection conn, String userName) throws 
                 lastName = result.getString("lastName");
                 firstName = result.getString("firstName");
                 phoneNo = result.getInt("phoneNo");
-                licenseNumber = result.getString("licenseNumber");
         }
         sql = "SELECT registrationNo FROM Car WHERE owner = \'" + userName + "\'";
 
@@ -159,64 +156,61 @@ public static void addCar(Connection conn, String userName) throws SQLException
 
 
 //login method
-public static void login(Connection conn) throws SQLException
-{
+public static void login(Connection conn) throws SQLException {
 
-        String userName = "", password ="";
+    String userName = "", password = "";
 
-        userName = Operation.stringInput(5);
-        password = Operation.stringInput(6);
+    userName = Operation.stringInput(5);
+    password = Operation.stringInput(6);
+    password = "\'" + password + "\'";
 
-        //Login Statement
-        String sql = "SELECT COUNT(*) FROM User WHERE userName = \'" + userName + "\' AND password = \'" + password + "\'";
 
-        Statement statement = conn.createStatement();
-        ResultSet result = statement.executeQuery(sql);
+    System.out.println(userName + " trying to log in...");
+
+
+    String sql = "SELECT COUNT(*) FROM User WHERE userName = \'" + userName +"\' AND password = SHA(" + password + ")";
+
+
+    Statement statement = conn.createStatement();
+    ResultSet result = statement.executeQuery(sql);
+
 
         while (result.next()) {
 
-                int count = result.getInt(1);
+            int count = result.getInt(1);
 
 
-                if(count == 0)
-                {
-                        Object[] options = { "Create an Account","Try Again", "Exit"};
+            if (count == 0) {
+                Object[] options = {"Create an Account", "Try Again", "Exit"};
 
-                        int choice = JOptionPane.showOptionDialog(null, //Component parentComponent
-                                                                  "We could not find a user with those credentials." + "\n Choose an option to proceed", //Object message,
-                                                                  "No User Found", //String title
-                                                                  JOptionPane.YES_NO_CANCEL_OPTION, //int optionType
-                                                                  JOptionPane.INFORMATION_MESSAGE, //int messageType
-                                                                  null, //Icon icon,
-                                                                  options, //Object[] options,
-                                                                  "Try Again"); //Object initialValue
-                        if(choice == 0 ) {
-                                addUser(conn);
-                        }else
-                        if(choice == 1 )
-                        {
-                                login(conn);
-                        } else
-                        {
-                                System.exit(0);
-                        }
+                int choice = JOptionPane.showOptionDialog(null, //Component parentComponent
+                        "We could not find a user with those credentials." + "\n Choose an option to proceed", //Object message,
+                        "No User Found", //String title
+                        JOptionPane.YES_NO_CANCEL_OPTION, //int optionType
+                        JOptionPane.INFORMATION_MESSAGE, //int messageType
+                        null, //Icon icon,
+                        options, //Object[] options,
+                        "Try Again"); //Object initialValue
+                if (choice == 0) {
+                    addUser(conn);
+                } else if (choice == 1) {
+                    login(conn);
+                } else {
+                    System.exit(0);
                 }
-
-                else
-                {
-                        System.out.println("Login success");
+            } else {
+                System.out.println("Login success");
 
 
-                        getUserDataShowMenu(conn, userName);
+                getUserDataShowMenu(conn, userName);
 
-                }
+            }
 
         }
 
 
+    }
 
-
-}
 
 
 //select a university method
@@ -349,7 +343,7 @@ public static void addUser(Connection conn) throws SQLException
 
         JOptionPane.showMessageDialog(null, "Let's create an account for you." + "\n Click Ok to Proceed","Add User",JOptionPane.PLAIN_MESSAGE);
 
-        String userName ="", password ="", universityName ="", lastName = "", firstName ="", licenseNumber ="";
+        String userName ="", password ="", universityName ="", lastName = "", firstName ="";
         int phoneNo =0;
 
         userName = Operation.stringInput(5); //initializing universityName,
@@ -357,11 +351,10 @@ public static void addUser(Connection conn) throws SQLException
         universityName = Operation.stringInput(7); //initializing state,
         lastName = Operation.stringInput(8); //initializing state,
         firstName = Operation.stringInput(9); //initializing state,
-        licenseNumber = Operation.stringInput(11); //initializing state,
         phoneNo = Operation.intInput(10); //initializing zipcode,
 
-        String sql = "INSERT INTO User (userName, password, universityName, lastName, firstName, phoneNo, licenseNumber)"
-                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (userName, password, universityName, lastName, firstName, phoneNo)"
+                     + "VALUES (?, SHA(?), ?, ?, ?, ?, ?)";
 
         PreparedStatement statement = conn.prepareStatement(sql);
 
@@ -371,15 +364,83 @@ public static void addUser(Connection conn) throws SQLException
         statement.setString(4, lastName);
         statement.setString(5, firstName);
         statement.setInt(6, phoneNo);
-        statement.setString(7, licenseNumber);
 
 
         int rowsAffected = statement.executeUpdate();
         if (rowsAffected > 0) {
                 System.out.println("********** SUCCESS!!, USER ADDED *********");
         }
+
+    JOptionPane.showMessageDialog(null, "You account has been created successfully. \n Click Ok to Sign In");
+
+
+
+
 }
 
+
+
+
+////
+//public static void deleteUser(Connection conn, String userName) throws SQLException
+//    {
+//
+//        Object[] options = { "View Supported Universities","Create an Account"};
+//
+//        int choice = JOptionPane.showOptionDialog(null, //Component parentComponent
+//                "Would you like to view supported Universities before creating an Account ?" + "\n Choose an option to proceed", //Object message,
+//                "CREATE ACCOUNT MENU", //String title
+//                JOptionPane.YES_NO_CANCEL_OPTION, //int optionType
+//                JOptionPane.INFORMATION_MESSAGE, //int messageType
+//                null, //Icon icon,
+//                options, //Object[] options,
+//                "Create an Account");//Object initialValue
+//        if(choice == 0 ) {
+//
+//            selectUniversity(conn);
+//        } else
+//
+//
+//
+//
+//
+//
+//            JOptionPane.showMessageDialog(null, "Let's create an account for you." + "\n Click Ok to Proceed","Add User",JOptionPane.PLAIN_MESSAGE);
+//
+//        String userName ="", password ="", universityName ="", lastName = "", firstName ="";
+//        int phoneNo =0;
+//
+//        userName = Operation.stringInput(5); //initializing universityName,
+//        password = Operation.stringInput(6); //initializing city,
+//        universityName = Operation.stringInput(7); //initializing state,
+//        lastName = Operation.stringInput(8); //initializing state,
+//        firstName = Operation.stringInput(9); //initializing state,
+//        phoneNo = Operation.intInput(10); //initializing zipcode,
+//
+//        String sql = "INSERT INTO User (userName, password, universityName, lastName, firstName, phoneNo)"
+//                + "VALUES (?, SHA(?), ?, ?, ?, ?, ?)";
+//
+//        PreparedStatement statement = conn.prepareStatement(sql);
+//
+//        statement.setString(1, userName);
+//        statement.setString(2, password);
+//        statement.setString(3, universityName);
+//        statement.setString(4, lastName);
+//        statement.setString(5, firstName);
+//        statement.setInt(6, phoneNo);
+//
+//
+//        int rowsAffected = statement.executeUpdate();
+//        if (rowsAffected > 0) {
+//            System.out.println("********** SUCCESS!!, USER ADDED *********");
+//        }
+//
+//        JOptionPane.showMessageDialog(null, "You account has been created successfully. \n Click Ok to Sign In");
+//
+//
+//
+//
+//    }
 
 
 }

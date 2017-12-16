@@ -6,8 +6,109 @@ import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 
 
-public class Ride
+public class Ride {
+
+
+        public static void viewRequestsDriver(Connection conn, String userName, String registrationNo, int destZip) throws SQLException {
+
+
+                int counter = 0, rideID = 0;
+
+                String[] rideRequests = new String[100];
+                int[] rideIDIndex = new int[100];
+                for (int i = 0; i < 100; i++) {
+                        rideRequests[i] = "";
+                        rideIDIndex[i] = 0;
+
+                }
+
+
+                //retrieving ride request data
+                String sql = "SELECT Ride.rideID,RideRequest.requestedBy, Ride.sourceZip, RideRequest.requestStatus  FROM RideRequest, Ride WHERE (Ride.rideID = RideRequest.rideID) AND driver = \'" + userName + "\'";
+
+
+                Statement statement = conn.createStatement();
+                ResultSet result = statement.executeQuery(sql);
+
+                while (result.next()) {
+
+                        //rideIDIndex[counter] = result2.getInt ("rideID");
+
+                        rideRequests[counter] += "   REQUESTED BY:  \'" + result.getString("requestedBy") + " ||  STARTING FROM:  " + result.getString("sourceZip") + " || DRIVER:  " + result.getString("driver")
+                                + " || REQUEST STATUS:  ";
+
+                        if (result.getInt("requestStatus") == 0)
+                                rideRequests[counter] += "  PENDING...  ";
+                        else
+                                rideRequests[counter] += "  ACCEPTED  ";
+                        counter++;
+                }
+
+                //if no requests
+                if (counter == 0) {
+
+                        JOptionPane.showMessageDialog(null, "Sorry there are no requests for your rides right now. \n Click Ok to Proceed");
+
+
+                } else {
+
+
+                        String requests = (String) JOptionPane.showInputDialog(null, "Here are the requests for your rides. \n Please select one to accept it."
+                                , "Requests Available",
+                                JOptionPane.PLAIN_MESSAGE,
+                                null, rideRequests, rideRequests[0]);
+
+                        for (int i = 0; i < 100; i++) {
+                                if (rideRequests[i] == requests)
+                                        rideID = rideIDIndex[i];
+
+
+                        }
+                        acceptRide(conn, userName, rideID, registrationNo, destZip);
+                        System.out.println(rideID);
+                }
+
+        MainApp.loginMenu(conn,userName,registrationNo,destZip);
+
+        //  return rideID;
+
+
+//                JOptionPane.showMessageDialog(null, "Here are the statuses of your requested rides: \n "+rideRequestStatus+"\n Click Ok to Proceed");
+//                MainApp.loginMenu(conn, userName, registrationNo, destZip);
+
+
+}
+
+
+//UPDATING HERE
+public static void acceptRide(Connection conn, String userName,int rideID, String registrationNo, int destZip) throws SQLException
 {
+
+
+
+        String sql = "UPDATE RideRequest SET requestStatus= 1 WHERE rideID=?";
+        PreparedStatement statement = conn.prepareStatement(sql);
+
+        statement.setInt(1,rideID);
+
+
+        int rowsAffected = statement.executeUpdate();
+        if (rowsAffected > 0) {
+                System.out.println("********** SUCCESS!!, REQUEST ACCEPTED *********");
+
+
+}
+
+
+
+
+
+
+
+
+}
+
+
 
 
 
@@ -160,7 +261,7 @@ public static void viewRequestStatusRider(Connection conn, String userName, Stri
                                 rideRequestStatus += "  ACCEPTED  ";
                 }
 
-              JOptionPane.showMessageDialog(null, "Here are the statuses of your requested rides: \n "+rideRequestStatus+"\n Click Ok to Proceed");
+              JOptionPane.showMessageDialog(null, "Here are the status' of your requested rides: \n "+rideRequestStatus+"\n Click Ok to Proceed");
                MainApp.loginMenu(conn, userName, registrationNo, destZip);
 
 
